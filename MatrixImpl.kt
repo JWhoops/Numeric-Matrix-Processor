@@ -1,12 +1,10 @@
 package processor
 
-class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override val dimension: Pair<Int, Int>) : Matrix {
-    override fun plus(m1: Matrix): Matrix {
+data class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override val dimension: Pair<Int, Int>) : Matrix {
+    override operator fun plus(m1: Matrix): Matrix {
         val result: Matrix = MatrixImpl(mutableListOf(mutableListOf()), Pair(this.dimension.first, this.dimension.second))
-        repeat(result.dimension.first) {
-            result.matrix.add(mutableListOf())
-        }
         matrix.forEachIndexed { row, rowElements ->
+            result.matrix.add(mutableListOf())
             rowElements.forEachIndexed { col, num ->
                 result.matrix[row].add((num + m1.matrix[row][col]))
             }
@@ -14,11 +12,11 @@ class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override
         return result
     }
 
-    override fun multiplyByNumber(num: Double): Matrix {
+    override operator fun times(num: Double): Matrix {
         val result: Matrix = MatrixImpl(mutableListOf(mutableListOf()), Pair(this.dimension.first, this.dimension.second))
-        matrix.forEachIndexed { row, mrow ->
+        matrix.forEachIndexed { row, matrixRow ->
             result.matrix.add(mutableListOf())
-            mrow.forEachIndexed { col, cell ->
+            matrixRow.forEachIndexed { col, cell ->
                 matrix[row][col] = cell * num
                 result.matrix[row].add(cell * num)
             }
@@ -26,7 +24,7 @@ class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override
         return result
     }
 
-    override fun multiplyByMatrix(m1: Matrix): Matrix {
+    override operator fun times(m1: Matrix): Matrix {
         val result: Matrix = MatrixImpl(mutableListOf(mutableListOf()), Pair(this.dimension.first, this.dimension.second))
         for (row in 0 until dimension.first) {
             result.matrix.add(mutableListOf())
@@ -85,12 +83,12 @@ class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override
 
     override fun getSubMatrixWithoutRC(row: Int, col: Int): Matrix {
         val result: Matrix = MatrixImpl(mutableListOf(), Pair(this.dimension.first - 1, this.dimension.second - 1))
-        for (trow in 0 until dimension.first) {
-            if (trow == row) continue
+        for (tempRow in 0 until dimension.first) {
+            if (tempRow == row) continue
             result.matrix.add(mutableListOf())
-            for (tcol in 0 until dimension.second) {
-                if (tcol == col) continue
-                result.matrix[result.matrix.size - 1].add(matrix[trow][tcol])
+            for (tempCol in 0 until dimension.second) {
+                if (tempCol == col) continue
+                result.matrix[result.matrix.size - 1].add(matrix[tempRow][tempCol])
             }
         }
         return result
@@ -100,26 +98,11 @@ class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override
         return determinantHelper(this)
     }
 
-    override fun getInverseMatrix(): Matrix {
-        var result: Matrix = MatrixImpl(mutableListOf(), Pair(this.dimension.first, this.dimension.second))
-        val determinant = this.getDeterminant()
-        var coefficient = 1.0
-        for(row in 0 until dimension.first) {
-            result.matrix.add(mutableListOf())
-            for (col in 0 until dimension.second) {
-                result.matrix[row].add(coefficient * this.getSubMatrixWithoutRC(row, col).getDeterminant())
-                coefficient*=-1.0
-            }
-            if(dimension.first % 2 == 0) coefficient *= -1
-        }
-        result = result.getTranspose(Diagonal.MAIN_DIAGONAL)
-        result = result.multiplyByNumber(1.0/determinant)
-        return result
-    }
-
     private fun determinantHelper(m: Matrix): Double {
         if (m.dimension == Pair(2, 2)) {
-            return m.matrix[0][0] * m.matrix[1][1] - m.matrix[0][1] * m.matrix[1][0]
+            return with(m) {
+                matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+            }
         }
         var result = 0.0
         var coefficient = 1.0
@@ -131,6 +114,23 @@ class MatrixImpl(override val matrix: MutableList<MutableList<Double>>, override
         }
         return result
     }
+
+    override fun getInverseMatrix(): Matrix {
+        var result: Matrix = MatrixImpl(mutableListOf(), Pair(this.dimension.first, this.dimension.second))
+        val determinant = this.getDeterminant()
+        var coefficient = 1.0
+        for (row in 0 until dimension.first) {
+            result.matrix.add(mutableListOf())
+            for (col in 0 until dimension.second) {
+                result.matrix[row].add(coefficient * this.getSubMatrixWithoutRC(row, col).getDeterminant())
+                coefficient *= -1.0
+            }
+            if (dimension.first % 2 == 0) coefficient *= -1
+        }
+        result = result.getTranspose(Diagonal.MAIN_DIAGONAL)
+        return result * (1.0/determinant)
+    }
+
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

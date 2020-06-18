@@ -42,7 +42,7 @@ class ProcessorImpl : Processor {
         println("Enter second matrix: >")
         val matrix2 = processStrMatrix(scanner, dimension2)
         println("The addition result is:")
-        println(matrix1.plus(matrix2).toString())
+        println(matrix1 + matrix2)
     }
 
     override fun processMultiplyMatrix(scanner: Scanner) {
@@ -58,20 +58,19 @@ class ProcessorImpl : Processor {
         println("Enter second matrix: >")
         val matrix2 = processStrMatrix(scanner, dimension2)
         println("The multiplication result is:")
-        println(matrix1.multiplyByMatrix(matrix2).toString())
+        println(matrix1 * matrix2)
     }
 
     override fun processMultiplyNumber(scanner: Scanner) {
         scanner.nextLine()
         print("Enter size of matrix: > ")
-        var input = scanner.nextLine()
+        val input = scanner.nextLine()
         val dimension1 = processStrDimension(input)
         println("Enter matrix: >")
         val matrix1 = processStrMatrix(scanner, dimension1)
         val number = scanner.nextDouble()
-        val result = matrix1.multiplyByNumber(number)
         println("The multiplication result is:")
-        println(result.toString())
+        println(matrix1 * number)
     }
 
     override fun processStrMatrix(scanner: Scanner, dimension: Pair<Int, Int>): Matrix {
@@ -128,7 +127,7 @@ class ProcessorImpl : Processor {
     override fun processDeterminant(scanner: Scanner) {
         scanner.nextLine()
         print("Enter matrix size: > ")
-        var input = scanner.nextLine()
+        val input = scanner.nextLine()
         val dimension1 = processStrDimension(input)
         println("Enter matrix: >")
         val matrix1 = processStrMatrix(scanner, dimension1)
@@ -139,7 +138,7 @@ class ProcessorImpl : Processor {
     override fun processInverseMatrix(scanner: Scanner) {
         scanner.nextLine()
         print("Enter matrix size: > ")
-        var input = scanner.nextLine()
+        val input = scanner.nextLine()
         val dimension1 = processStrDimension(input)
         println("Enter matrix: >")
         val matrix1 = processStrMatrix(scanner, dimension1)

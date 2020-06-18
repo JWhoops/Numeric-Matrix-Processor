@@ -20,11 +20,7 @@ class MatrixParserImpl : MatrixParser {
         return matrixRow
     }
 
-    override fun parseMatrix(rows: MutableList<MutableList<Double>>) {
-        TODO("Not yet implemented")
-    }
-
-    override fun parseOneDidigt(digit: String): Double {
+    override fun parseOneDigit(digit: String): Double {
         return parseDouble(digit)
     }
 }
