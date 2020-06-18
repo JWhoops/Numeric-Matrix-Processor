@@ -6,9 +6,9 @@
 5. Determinant
 6. Inverse Matrix (Cofactor and Determinant)
 
-Input Example:
-size: 2 2
-matrix:
-1 2 3
-4 5 6
-7 8 9
+7. Input Example:<br>
+size: 2 2 <br>
+matrix: <br>
+1 2 3 <br>
+4 5 6 <br>
+7 8 9 <br>
